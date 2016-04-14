@@ -56,16 +56,6 @@
 
 @implementation PSTExtendedAlertController
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    if (self.viewWillDisappearBlock) self.viewWillDisappearBlock();
-}
-
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-    if (self.viewDidDisappearBlock) self.viewDidDisappearBlock();
-}
-
 @end
 
 @interface PSTAlertController () <UIActionSheetDelegate, UIAlertViewDelegate> {
@@ -198,7 +188,10 @@
         __weak typeof (self) weakSelf = self;
         UIAlertAction *alertAction = [UIAlertAction actionWithTitle:action.title style:(UIAlertActionStyle)action.style handler:^(UIAlertAction *uiAction) {
             weakSelf.executedAlertAction = action;
+            if (weakSelf.alertController.viewWillDisappearBlock) weakSelf.alertController.viewWillDisappearBlock();
+            NSLog(@"action handler called with action:%@",action);
             [action performAction];
+            if (weakSelf.alertController.viewDidDisappearBlock) weakSelf.alertController.viewDidDisappearBlock();
         }];
         [self.alertController addAction:alertAction];
     } else {
